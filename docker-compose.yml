@@ -1,0 +1,13 @@
+version: "3.8"
+
+
+services:
+  nginx:
+    image: nginx:latest # Используем официальный образ
+    container_name: my_nginx
+    ports:
+      - "80:80" # Проксируем порт 80 контейнера на 8080 локальной машины
+    volumes:
+      - ./nginx-conf/nginx.conf:/etc/nginx/nginx.conf:ro # Монтируем конфиг
+      - ./html:/usr/share/nginx/html:ro # Монтируем папку с сайтами
+    restart: always # Автоматический перезапуск при сбое
