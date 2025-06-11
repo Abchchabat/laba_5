@@ -1,13 +1,31 @@
 version: "3.8"
-
-
 services:
+  fastapi:
+    image: ghcr.io/abchchabat/my-fastapi-app:latest
+Меняем на своё
+    container_name: fastapi_app
+    restart: always
+    ports:
+          environment:
+      - ENV=production # Можно добавить другие переменные окружения
+    networks:
+      - app_network
+
+
   nginx:
-    image: nginx:latest # Используем официальный образ
+    image: nginx:latest
     container_name: my_nginx
     ports:
-      - "80:80" # Проксируем порт 80 контейнера на 8080 локальной машины
+      - "80:80" # Доступ к Nginx
     volumes:
-      - ./nginx-conf/nginx.conf:/etc/nginx/nginx.conf:ro # Монтируем конфиг
-      - ./html:/usr/share/nginx/html:ro # Монтируем папку с сайтами
-    restart: always # Автоматический перезапуск при сбое
+      - ./nginx-conf/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - fastapi # Запускаем Nginx только после FastAPI
+    restart: always
+    networks:
+      - app_network
+
+
+networks:
+  app_network:
+    driver: bridge
